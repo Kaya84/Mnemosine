@@ -2,6 +2,11 @@
 Password manager and sharer
 
 
+
+
+# Mnemosine (ITA)
+
+
 Spesso si ha la necessità di ricordare un sacco di credenziali diverse.
 
 In ambito più esteso purtroppo c'è pure la necessità di condividerlo con persone terze del gruppo.
