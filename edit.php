@@ -3,7 +3,6 @@
 session_start();
 
 include "config.php";
-include "db_con.php";
 
 //Verifico che la sessione sia valorizzata, altrimenti mando al login
 if(!isset($_SESSION['name'])){

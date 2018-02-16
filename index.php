@@ -1,7 +1,6 @@
 <?php 
 
 include "config.php";
-include "db_con.php";
 session_start();
 $debug= 0;
 //Primo step, verifico se esiste il file install.php nella cartella install. Se è così rimando ad effettuare l'installazione.

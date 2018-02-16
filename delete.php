@@ -1,6 +1,5 @@
 <?php 
 include "config.php";
-include "db_con.php";
 session_start();
 $debug= 0;
 

@@ -1,6 +1,5 @@
 <?php
 include "config.php";
-include "db_con.php";
 $errorMsg = null;
 
 if(isset($_POST['login'])){
