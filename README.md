@@ -20,11 +20,10 @@ Mnemosine è una app sviluppata in php che permette di
 # come si installa
 
 Scompattare l'archivio in una cartella
-Installare un mysql server e costruire la struttura
-Inserire i parametri nel database
-
-
-TODO: finire di scrivere la documentazione
+Installare un mysql server e costruire la struttura importando il file database.sql
+Inserire i parametri nel file config.php
+OPT: Abilitare HTTPS (si può usare let's encrypt esponendo temporaneamente la porta all'esterno)
+Registrarsi all'applicazione
 
 
 
