@@ -4,7 +4,12 @@ include "config.php";
 include "db_con.php";
 session_start();
 $debug= 0;
-
+//Primo step, verifico se esiste il file install.php nella cartella install. Se è così rimando ad effettuare l'installazione.
+if ( file_exists("install")){
+	header('Location: install/install.php');
+	die();
+}
+	
 //Verifico che la sessione sia valorizzata, altrimenti mando al login
 if(!isset($_SESSION['name'])){
 			header('Location: login.php');
@@ -22,16 +27,16 @@ if(!isset($_SESSION['name'])){
 <!-- JQUERY -->
 <!--<script type="text/javascript" language="javascript" src="jquery/jquery.js"></script> /-->
 
-<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript" language="javascript" src="jquery/jquery-1.12.4.js"></script>
 
 <!-- REf: https://datatables.net/examples/styling/bootstrap.html /-->
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="jquery/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="jquery/dataTables.bootstrap.min.js"></script>
 
 	
 	<!-- bootstrap-3.3.7 -->
 <link rel="stylesheet" href="bootstrap-3.3.7/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="css/dataTables.bootstrap.min.css">
 <script src="bootstrap-3.3.7/js/bootstrap.min.js"></script>
 <script src="js/typeahead.bundle.js"></script>
 
@@ -83,32 +88,20 @@ foreach ($res as $r){
 	//decifro la password per questo salvataggio
 	$decrypted = null;
 	$k = openssl_private_decrypt($r['encPassword'], $decrypted, $_SESSION['privkey']);
-	// var_dump($r['encPassword']);
-	// var_dump($k);
-	  echo "<tr id='row_" .$r['id']. "'>" . PHP_EOL;
-     echo  "<th scope='row'>" .$r['id']. "</th>" . PHP_EOL;
-     echo  "<td><a href='" .$r['url'] ."'>" .$r['url'] ."</a></td>" . PHP_EOL;
+	echo "<tr id='row_" .$r['id']. "'>" . PHP_EOL;
+    echo  "<th scope='row'>" .$r['id']. "</th>" . PHP_EOL;
+    echo  "<td><a href='" .$r['url'] ."'>" .$r['url'] ."</a></td>" . PHP_EOL;
     echo   "<td>" .$r['username'] ."</td>" . PHP_EOL;
-	
-	
-	
-    // echo  " <td> <input id='password-field' type='password' class='form-control' name='password' value='$decrypted'>
-              // <span toggle='#password-field' class='fa fa-fw fa-eye field-icon toggle-password'></span></td>" . PHP_EOL;
-			  
-echo 			  "<td>
-          <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_" . $r['id']. "' value='$decrypted'>
+	//Blocco mostra password
+	echo 			  "<td>
+          <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_" . $r['id']. "' value='$decrypted' readonly>
             <button class='btn btn-default reveal' type='button' ref='" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
           </span> </td>";
-    
-	
-	
-	echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
+    echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
 	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
 	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
 	$infoBox = "Data Creazione: " .  $createDate  . "<br>" .  $editDate;
-	
-	
-    echo  " <td><a href='#'><span class='campoNote glyphicon glyphicon-info-sign' data-toggle='tooltip' data-html='true' data-placement='top' title='$infoBox'></span></a> &nbsp; 
+	echo  " <td><a href='#'><span class='campoNote glyphicon glyphicon-info-sign' data-toggle='tooltip' data-html='true' data-placement='top' title='$infoBox'></span></a> &nbsp; 
 			<a href='edit.php?id=" .$r['id']. "' class=''><span class='glyphicon glyphicon-edit' title='Modifica'></span>  </a> &nbsp; 
 				<a href='share.php?id=" .$r['id']. "' class=''><span class='glyphicon glyphicon-share' title='Condividi con..'></span>  </a> &nbsp; 
 				<a href='#' class='delete' id='" .$r['id']. "' ><span class='glyphicon glyphicon-remove' title='Elimina '></span>  </a>
@@ -134,6 +127,8 @@ Password condivise con te </h2>
       <th scope="col">URL</th>
       <th scope="col">username</th>
       <th scope="col">password</th>
+      <th scope="col">Note</th>
+      <th scope="col">hint</th>
     </tr>
   </thead>
   <tbody>
@@ -145,24 +140,41 @@ Password condivise con te </h2>
 							"[>]user_login" => ["password.ownerId" => "id"]
 						],
 						[
+							"share.id",
 							"share.encPassword (encoded)",
 							"user_login.full_name*",
 							"password.url",
 							"password.username",
-							"user_login.email"
+							"user_login.email",
+							"password.note",
+							"password.creationDate",
+							"password.editDate"
 						], 
 						[ "share.userId" => $_SESSION['userId'] ]);
 
 foreach ($res as $r){
+	// var_dump($r);
 	//decifro la password per questo salvataggio
 	$decrypted = null;
 	// var_dump($r['encoded']);
 	$k = openssl_private_decrypt($r['encoded'], $decrypted, $_SESSION['privkey']);
-	  echo "<tr>" . PHP_EOL;
-     echo  "<th scope='row'>" .$r['full_name']. "</th>" . PHP_EOL;
-     echo  "<td><a href='" .$r['url'] ."' >" .$r['url'] ."</a></td>" . PHP_EOL;
+	echo "<tr>" . PHP_EOL;
+    echo  "<th scope='row'>" .$r['full_name']. "</th>" . PHP_EOL;
+    echo  "<td><a href='" .$r['url'] ."' >" .$r['url'] ."</a></td>" . PHP_EOL;
     echo   "<td>" .$r['username'] ."</td>" . PHP_EOL;
-    echo  " <td>" .$decrypted ."</td>" . PHP_EOL;
+	
+	
+	echo "<td>
+          <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_sh_" . $r['id']. "' value='$decrypted' readonly>
+            <button class='btn btn-default reveal' type='button' ref='sh_" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
+          </span> </td>";
+	    echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
+	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
+	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
+	$infoBox = "Data Creazione: " .  $createDate  . "<br>" .  $editDate;
+	echo  " <td><a href='#'><span class='campoNote glyphicon glyphicon-info-sign' data-toggle='tooltip' data-html='true' data-placement='top' title='$infoBox'></span></a> &nbsp; </td>";
+	
+    // echo  " <td>" .$decrypted ."</td>" . PHP_EOL;
     // echo  " <td>-----</td>" . PHP_EOL;
     echo "</tr>" . PHP_EOL;
 	
@@ -211,7 +223,7 @@ foreach ($res as $r){
     // echo  " <td>-----</td>" . PHP_EOL;
     echo "</tr>" . PHP_EOL;
 	
-}
+} 
   ?>
   
   </tbody>

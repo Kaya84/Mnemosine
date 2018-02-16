@@ -13,9 +13,10 @@ $database = new Medoo([
 	// required
 	'database_type' => 'mysql',
 	'database_name' => 'password',
-	'server' => '',
+	'server' => 'sqlnew.ledro.it',
 	'username' => 'password',
-	'password' => '',
+	'password' => 'KZWXk1saFOutqK3e',
+ 
  
 	// [optional]
 	'charset' => 'utf8',

@@ -177,7 +177,7 @@ input::-webkit-input-placeholder {
 					<form  data-toggle="validator" class="form-horizontal" method="post" action="#" role='form'>
 						
 						<div class="form-group">
-							<label for="name" class="cols-sm-2 control-label">Your Name</label>
+							<label for="name" class="cols-sm-2 control-label">Il tuo nome (e cognome)</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
@@ -187,7 +187,7 @@ input::-webkit-input-placeholder {
 						</div>
 
 						<div class="form-group">
-							<label for="email" class="cols-sm-2 control-label">Your Email</label>
+							<label for="email" class="cols-sm-2 control-label">Indirizzo e-mail</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
@@ -219,7 +219,7 @@ input::-webkit-input-placeholder {
 						</div>
 
 						<div class="form-group">
-							<label for="confirm" class="cols-sm-2 control-label">Confirm Password</label>
+							<label for="confirm" class="cols-sm-2 control-label">Conferma Password</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
@@ -229,7 +229,7 @@ input::-webkit-input-placeholder {
 						</div>
 
 						<div class="form-group ">
-							<button type="submit" class="btn btn-primary btn-lg btn-block login-button">Register</button>
+							<button type="submit" class="btn btn-primary btn-lg btn-block login-button">Registra</button>
 							<input type="hidden" name='requestRegistration' value='1'>
 						</div>
 						<div class="login-register">

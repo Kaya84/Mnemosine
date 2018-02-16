@@ -30,6 +30,13 @@ switch ($action){
 		
 		//Recupero la password salvata dal db
 		$r = $database->get("password", "*", ["id" => $_GET['passwordId']]);
+		
+		//Generazione del messaggio per la mail
+		$username = $r['username'];
+		$url = $r['url'];
+		$messaggio = "L'utente $username ha condiviso con te delle credenziali per il sito web " . $url . "\nAccedi alla piattaforma per i dettagli";
+		
+		//Recupero credenziali dal db
 		$decrypted = null;
 		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $_SESSION['privkey']);		
 		//adesso recupero la chiave pubblica dell'utente con cui voglio condividere la password
@@ -37,8 +44,6 @@ switch ($action){
 		// var_dump($r);die();
 		$encriptedPassword = null;
 		openssl_public_encrypt($decrypted, $encriptedPassword, $r['pubkey']);
-		
-		
 		$database->insert("share", 
 							[
 							"passwordId" => $_GET['passwordId'],
@@ -83,10 +88,10 @@ switch ($action){
 					//Content
 					$mail->isHTML(true);                                  // Set email format to HTML
 					$mail->Subject = 'Nuova password condivisa con te'; //Todo: migliorare il testo
-					$mail->Body    = 'Ti è stata appena condivisa una password';
-					$mail->AltBody = 'Ti è stata appena condivisa una password';
+					$mail->Body    = $messaggio;
+					$mail->AltBody = $messaggio;
 
-					// $mail->send();
+					$mail->send();
 					// echo 'Message has been sent';
 				} catch (Exception $e) {
 					echo 'Message could not be sent.';
@@ -98,13 +103,17 @@ switch ($action){
 		echo json_encode(["res" => 0, "msg" => "Condivisione creata correttamente"]);	
 	break;
 	case "delete":
-		$database->delete("share", ["id" => $_GET['id']]);
-			echo " Condivisione eliminata. Numero righe eliminate : "; 
-			var_dump( $database->rowCount());
+		$data = $database->delete("share", ["id" => $_GET['id']]);
+		if ($data->rowCount() == 1){
+			echo json_encode(["res" => 0, "msg" => "Condivisione rimossa"]);		
+		} else {
+			echo json_encode(["res" => 1, "msg" => "Errore nell'eliminazione"]);		
+		}
 
 	break;
 	default:
-		die ("Error: action unknown");
+			echo json_encode(["res" => 1, "msg" => "Comando sconosciuto"]);		
+			die();
 	break;
 	
 }
