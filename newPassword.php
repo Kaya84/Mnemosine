@@ -2,7 +2,10 @@
 
 session_start();
 include "config.php";
-include "db_con.php";
+
+// Agostini Marco - 19/02/2018 - 12:37
+//include "db_con.php";
+
 // var_dump($_SESSION);
 
 //Verifico che la sessione sia valorizzata, altrimenti mando al login
