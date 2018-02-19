@@ -17,6 +17,12 @@ Mnemosine è una app sviluppata in php che permette di
 - Condividere queste credenziali in modo sicuro
 
 
+# Requisiti:
+
+PHP > 5.5
+MYSQL > 5.6
+
+
 # come si installa
 
 Scompattare l'archivio in una cartella
