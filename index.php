@@ -86,7 +86,16 @@ $res = $database->select("password", "*", ["ownerId" => $_SESSION['userId']]);
 foreach ($res as $r){
 	//decifro la password per questo salvataggio
 	$decrypted = null;
-	$k = openssl_private_decrypt($r['encPassword'], $decrypted, $_SESSION['privkey']);
+	$k = null;
+	if ($useStrongSecurity){
+		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $_SESSION['privkey']);	
+	} else {
+			 $priv = openssl_get_privatekey($_SESSION['privkey'],$_SESSION['password']);
+		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $priv);		 
+			 
+	}
+	
+	
 	echo "<tr id='row_" .$r['id']. "'>" . PHP_EOL;
     echo  "<th scope='row'>" .$r['id']. "</th>" . PHP_EOL;
     echo  "<td><a href='" .$r['url'] ."'>" .$r['url'] ."</a></td>" . PHP_EOL;

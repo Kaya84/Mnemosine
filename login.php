@@ -6,7 +6,7 @@ if(isset($_POST['login'])){
 	// $email = ;
 	// $password = ;
 	//Mi faccio resituire solo il primo valore
-	$res = $database->get("user_login","*", ["email" => $_POST['email']] );
+	$res = $database->get("user_login","*", ["AND" =>["email" => $_POST['email'], "isActive" => 1]] );
 	
 	// $cek = mysqli_num_rows(mysqli_query($connection , "SELECT * FROM user_login WHERE email='$email' AND password='$password'"));
 	// $data = mysqli_fetch_array(mysqli_query($connection , "SELECT * FROM user_login WHERE email='$email' AND password='$password'"));
@@ -23,7 +23,7 @@ if(isset($_POST['login'])){
 		$_SESSION['privkey'] = $res['privkey'];
 		$_SESSION['pubkey'] = $res['pubkey'];
 		$_SESSION['userId'] = $res['id'];
-		
+		$_SESSOPM['userPassword'] = $_POST['password'];
 		// echo "<script language=\"javascript\">alert(\"welcome \");document.location.href='index.php';</script>";
 		
 		header('Location: index.php');
