@@ -1,3 +1,4 @@
+*
 # Mnemosine
 Password manager and sharer
 
@@ -15,6 +16,12 @@ Mnemosine è una app sviluppata in php che permette di
 
 - Memorizzare credenziali di accesso
 - Condividere queste credenziali in modo sicuro
+
+
+# Requisiti:
+
+PHP > 5.5
+MYSQL > 5.6
 
 
 # come si installa
