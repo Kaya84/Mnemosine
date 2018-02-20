@@ -1,10 +1,7 @@
-<?php 
+<?php
 
 session_start();
 include "config.php";
-
-// Agostini Marco - 19/02/2018 - 12:37
-//include "db_con.php";
 
 // var_dump($_SESSION);
 
@@ -12,16 +9,15 @@ include "config.php";
 if(!isset($_SESSION['name'])){
 			header('Location: login.php');
 		die();
-		
 }
 $error = null;
 $debug= 0;
 //Valorizzo a 1 se c'è l'inserimento di una nuova password
 $newPassword = 0;
 IF(ISSET($_SESSION['name'])){
-	
+
 	if (isset($_POST["check"])){
-		
+
 		$userName = $_POST["userName"];
 		$password = $_POST["password"];
 		$url = $_POST["url"];
@@ -34,14 +30,13 @@ IF(ISSET($_SESSION['name'])){
 			   $url = "http://" . $url;
 			   }
 		}
-		
-		
+
 		//Recupero la chiave pubblica dell'utente corrente e provvedo a usarla per cifrare la password
 		$pubKey = $_SESSION["pubkey"];
 		$encriptedPassword = null;
 		openssl_public_encrypt($password, $encriptedPassword, $pubKey);
-	// var_dump($encriptedPassword);
-	// die();
+		// var_dump($encriptedPassword);
+		// die();
 		//Inserisco i dati nel database
 		$r = $database->insert("password", [
 			"ownerId" => $_SESSION["userId"],
@@ -55,11 +50,10 @@ IF(ISSET($_SESSION['name'])){
 		} else {
 			$newPassword = 1;
 		}
-		
+
 	}
-	
-	
-	
+
+
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -121,20 +115,13 @@ if ($newPassword){
 </div>
 <?php
 if ($debug){
-	
-	
 	echo "<pre>" . $_SESSION['privkey'] . "</pre>";
 }
 ?>
 </body>
 </html>
 
-
-
-<?php 
-
-
-
+<?php
 
 }else{
 	echo "<script language=\"javascript\">alert(\"Please login\");document.location.href='login.php';</script>";	
