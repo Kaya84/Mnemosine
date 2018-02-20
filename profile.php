@@ -1,6 +1,5 @@
-<?php 
+<?php
 include "config.php";
-include "db_con.php";
 session_start();
 $debug= 0;
 
@@ -8,8 +7,7 @@ $debug= 0;
 if(!isset($_SESSION['name'])){
 			header('Location: login.php');
 		die();
-		
-} 
+}
 
 
 if (isset($_POST["userId"])){
@@ -24,24 +22,24 @@ if (isset($_POST["userId"])){
 						"email" => $_POST['email'],
 						"notifyOnUpdate" => $notifyOnUpdate,
 						"notifyOnShare" => $notifyOnShare
-						], 
+						],
 						["id" => $_POST['userId']]);
-	
+
 	//Verifico ora se il campo password mi arriva con qualche valorizzazione, se si avvio la procedura
 	//TODO: sarebbe opportuno gestire il tutto con una transazione
-	
+
 	if( !empty($_POST['password'])){
-		
+
 		//Se uso la sicurezza avanzata, devo rigenerare la chiave pubblica/privata per l'utente
-		
+
 		if ($useStrongSecurity ){
-			
+
 			$config = array(
 				"digest_alg" => "sha512",
 				"private_key_bits" => 4096,
 				"private_key_type" => OPENSSL_KEYTYPE_RSA,
 			);
-			   
+
 			// Create the private and public key
 			$res = null;
 			$res = openssl_pkey_new($config);
@@ -55,26 +53,26 @@ if (isset($_POST["userId"])){
 			//Prima di salvare la nuova chiave nel DB devo PRIMA AGGIORNARE TUTTE LE PASSWORD generate con la vecchia chiave
 			//TODO : fare tutte la parte sopra descritta
 			//[.......]
-			
+
 			//Recupero tutti i dati per cui l'utente ha una password condivisa
 			$shares = $database->select("share", "*", ["userId" => $_SESSION['userId']]);
-			
+
 			foreach($shares as $share){
 					//Primo step: decodifico in chiaro la password fatta con la vecchia chiave
-					
+
 					$decrypted = null;
 					$k = openssl_private_decrypt($share['encPassword'], $decrypted, $_SESSION['privkey']);	
 					//Cifro la password con la nuova chiave pubblica
 					$encriptedPassword = null;
 					openssl_public_encrypt($decrypted, $encriptedPassword, $pubKey);
-	
+
 					//Ora procedo con il salvare la nuova password cifrata	nel db
 					$database->update("share", 
 											[
 											"encPassword" => $encriptedPassword
 											],[ "id" => $share['id']]);
 			}
-			
+
 			// Adesso che ho sistemato le password pre-esistenti, procedo ad aggiornare la chiave pubblica/privata nel db
 			$database->update("user_login", 
 						[ "password" => password_hash($_POST['password'], PASSWORD_DEFAULT),
@@ -82,8 +80,8 @@ if (isset($_POST["userId"])){
 							"pubkey" => $pubKey
 							],
 						["id" => $_POST['userId']]);
-						
-						
+
+
 		} else {
 			//Non avendo la chiave privata che dipende dalla password, posso fare solo l'aggiornamento della password
 			$database->update("user_login", 
@@ -91,7 +89,7 @@ if (isset($_POST["userId"])){
 						["id" => $_POST['userId']]);
 		}
 	}
-	
+
 }
 ?>
 
@@ -130,21 +128,46 @@ $res = $database->get("user_login", "*", ["id" => $_SESSION['userId']]);
 <form method='post' action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>'>
   <div class="form-row">
     <div class="form-group">
-      <label for="inputEmail4">Nome</label>
-      <input type="text" class="form-control" id="inputEmail4" placeholder="" name='full_name' value='<?php echo $res['full_name'] ?>'>
+		<?php
+		// se e' stata attivata l'autenticazione tramite LDAP non consento la modifica dell'email
+		if ($autenticazioneLDAP == 0){
+			echo '<label for="inputEmail4">Nome</label>';
+			echo '<input type="text" class="form-control" id="inputEmail4" placeholder="" name="full_name" value="' .$res['full_name']. '">';
+		}
+		else {
+			echo '<label for="inputEmail4">Nome</label>';
+			echo '<output name="emailtesto" id="output">' .$res['full_name']. '</output>';
+		}
+		?>
     </div>
-    <div class="form-group">
-      <label for="inputPassword4">Password</label>
-      <input type="text" class="form-control" id="inputPassword4" placeholder="Valorizzare solo se si vuole cambiare password" name='password' value='<?php echo "" ?>'>
-    </div>
+	<?php
+	// se e' stata attivata l'autenticazione tramite LDAP non consento la modifica della password utente
+	if ($autenticazioneLDAP == 0){
+		echo '
+		    <div class="form-group">
+			<label for="inputPassword4">Password</label>
+      		<input type="text" class="form-control" id="inputPassword4" placeholder="Valorizzare solo se si vuole cambiare password" name="password" value="">
+		    </div>
+		';
+	}
+	?>
   </div>
   <div class="form-group">
-    <label for="email">Email</label>
-    <input type="text" class="form-control" id="email" placeholder="" name='email' value='<?php echo $res['email'] ?>'>
+	<?php
+	// se e' stata attivata l'autenticazione tramite LDAP non consento la modifica dell'email
+	if ($autenticazioneLDAP == 0){
+		echo '<label for="email">Email</label>';
+		echo '<input type="text" class="form-control" id="email" placeholder="" name="email" value="' .$res['email']. '">';
+	}
+	else {
+		echo '<label for="email">Email:</label>';
+		echo '<output name="emailtesto" id="output">' .$res['email']. '</output>';
+	}
+	?>
   </div>
     <div class="form-group">
-    
-	
+
+
 	<?php
 	$notifyOnShare = ($res['notifyOnShare']) ? "checked" : "";
 	?>
@@ -169,11 +192,10 @@ $res = $database->get("user_login", "*", ["id" => $_SESSION['userId']]);
 
 <?php
 if ($debug){
-	
-	
+
+
 	echo "<pre>" . $_SESSION['privkey'] . "</pre>";
 }
 ?>
 </body>
 </html>
-

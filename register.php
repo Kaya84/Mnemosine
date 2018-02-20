@@ -20,7 +20,7 @@ if (isset($_POST['requestRegistration'])){
 		"private_key_bits" => 4096,
 		"private_key_type" => OPENSSL_KEYTYPE_RSA,
 	);
-	   
+
 	// Create the private and public key
 	$res = null;
 	$res = openssl_pkey_new($config);
