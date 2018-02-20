@@ -58,7 +58,8 @@ CREATE TABLE `user_login` (
   `pubkey` text NOT NULL,
   `email` varchar(250) NOT NULL,
   `notifyOnShare` tinyint(1) NOT NULL DEFAULT '1',
-  `notifyOnUpdate` tinyint(1) NOT NULL DEFAULT '1'
+  `notifyOnUpdate` tinyint(1) NOT NULL DEFAULT '1',
+  `isActive` tinyint(1) NOT NULL DEFAULT '1',
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
