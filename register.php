@@ -1,7 +1,28 @@
 <?php
 include "config.php";
+include "mail.php";
 $errorMsg = null;
 $registrationOk = false;
+
+//Funzione per la verifica e la generaizone deu GUID
+//REF: https://stackoverflow.com/questions/18206851/com-create-guid-function-got-error-on-server-side-but-works-fine-in-local-usin/18206984
+function getGUID(){
+    if (function_exists('com_create_guid')){
+        return com_create_guid();
+    }
+    else {
+        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+        $charid = strtoupper(md5(uniqid(rand(), true)));
+        $hyphen = chr(45);// "-"
+        $uuid =             substr($charid, 0, 8).$hyphen
+            .substr($charid, 8, 4).$hyphen
+            .substr($charid,12, 4).$hyphen
+            .substr($charid,16, 4).$hyphen
+            .substr($charid,20,12);            
+        return $uuid;
+    }
+}
+
 
 //Verifico se è ammessa la registrazione
 if (!$isRegistrationEnabled ){
@@ -35,7 +56,8 @@ if (isset($_POST['requestRegistration'])){
 	// Extract the public key from $res to $pubKey
 	$pubKey = openssl_pkey_get_details($res);
 	$pubKey = $pubKey["key"];
-	
+	//Default se l'utente è già attivo ($requestMailActivation = 0) oppure devo aspettare il login
+	$isActive = $requestMailActivation == 0 ? 1 : 0;
 	//inserisco i dati nel db
 	$database->insert("user_login",
 			[ 
@@ -44,7 +66,8 @@ if (isset($_POST['requestRegistration'])){
 				// "username" => $_POST['username'],
 				"password" => password_hash($_POST['password'], PASSWORD_DEFAULT),
 				"privkey" => $privKey,
-				"pubkey" => $pubKey
+				"pubkey" => $pubKey,
+				"isActive" => $isActive
 				
 			]);
 	
@@ -53,12 +76,31 @@ if (isset($_POST['requestRegistration'])){
 	//Recupero l'id di inserimento
 	$account_id = $database->id();
 	if ($account_id != 0){
-	$registrationOk = true;	
+		$registrationOk = true;	
 	}
 	//Todo: Gestire eventuali errori di inserimento
 	//Todo: gestire mail di conferma registrazione
+	if( $requestMailActivation){
+		
+		$guid = getGUID();
+		$database->insert("activation",
+					[
+						"userId" => $account_id,
+						"guid" => $guid					
+					]);
+					
+		
+		
+		$actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://" . $_SERVER[HTTP_HOST] . $_SERVER[CONTEXT_PREFIX] . "/index.php";
+		$htmlMailText = "Per completare l'attivaizone cliccare sul link: " . $actual_link;
+		
+		
+		
+		mnemosineSendMail("kaya84@gmail.com", "kaya84@gmail.com", "Richiesta attivazione account Mnemosine", "$htmlMailText", "$htmlMailText");
+					
+	}
+	
 }
-
 ?>
 
 <!DOCTYPE html>
