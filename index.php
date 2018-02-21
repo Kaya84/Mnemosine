@@ -90,7 +90,7 @@ foreach ($res as $r){
 	if ($useStrongSecurity){
 		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $_SESSION['privkey']);	
 	} else {
-			 $priv = openssl_get_privatekey($_SESSION['privkey'],$_SESSION['password']);
+		$priv = openssl_get_privatekey($_SESSION['privkey'],$_SESSION['password']);
 		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $priv);		 
 			 
 	}
@@ -161,10 +161,8 @@ Password condivise con te </h2>
 						[ "share.userId" => $_SESSION['userId'] ]);
 
 foreach ($res as $r){
-	// var_dump($r);
 	//decifro la password per questo salvataggio
 	$decrypted = null;
-	// var_dump($r['encoded']);
 	$k = openssl_private_decrypt($r['encoded'], $decrypted, $_SESSION['privkey']);
 	echo "<tr>" . PHP_EOL;
     echo  "<th scope='row'>" .$r['full_name']. "</th>" . PHP_EOL;
@@ -182,8 +180,6 @@ foreach ($res as $r){
 	$infoBox = "Data Creazione: " .  $createDate  . "<br>" .  $editDate;
 	echo  " <td><a href='#'><span class='campoNote glyphicon glyphicon-info-sign' data-toggle='tooltip' data-html='true' data-placement='top' title='$infoBox'></span></a> &nbsp; </td>";
 	
-    // echo  " <td>" .$decrypted ."</td>" . PHP_EOL;
-    // echo  " <td>-----</td>" . PHP_EOL;
     echo "</tr>" . PHP_EOL;
 	
 }
