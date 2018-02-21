@@ -82,9 +82,9 @@ CREATE TABLE `user_login` (
 --
 -- Struttura per la vista `v_sharedWith`
 --
-DROP TABLE IF EXISTS `v_sharedWith`;
+DROP VIEW IF EXISTS `v_sharedWith`;
 
-create view test as select `user_login`.`id` AS `id`,
+create view v_sharedWith as select `user_login`.`id` AS `id`,
  		`url` AS `url`,
         `username` AS `username`,
         `user_login`.`email` AS `email`,
