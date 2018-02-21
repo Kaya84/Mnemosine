@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Creato il: Feb 16, 2018 alle 11:24
+-- Creato il: Feb 21, 2018 alle 14:00
 -- Versione del server: 5.7.19-0ubuntu0.16.04.1
 -- Versione PHP: 7.0.22-0ubuntu0.16.04.1
 
@@ -13,6 +13,18 @@ SET time_zone = "+00:00";
 --
 -- Database: `password`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `activation`
+--
+
+CREATE TABLE `activation` (
+  `userId` int(11) NOT NULL,
+  `guid` varchar(256) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -59,21 +71,11 @@ CREATE TABLE `user_login` (
   `email` varchar(250) NOT NULL,
   `notifyOnShare` tinyint(1) NOT NULL DEFAULT '1',
   `notifyOnUpdate` tinyint(1) NOT NULL DEFAULT '1',
-  `isActive` tinyint(1) NOT NULL DEFAULT '1'
+  `isActive` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
---
--- Struttura stand-in per le viste `v_sharedWith`
---
-CREATE TABLE `v_sharedWith` (
-`id` int(20)
-,`url` varchar(512)
-,`username` varchar(256)
-,`email` varchar(250)
-,`idSharedUser` int(11)
-);
 
 -- --------------------------------------------------------
 
@@ -82,11 +84,16 @@ CREATE TABLE `v_sharedWith` (
 --
 DROP TABLE IF EXISTS `v_sharedWith`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_sharedWith`  AS  select `user_login`.`id` AS `id`,`url` AS `url`,`username` AS `username`,`user_login`.`email` AS `email`,`share`.`userId` AS `idSharedUser` from ((`share` left join `password` on((`share`.`passwordId` = `id`))) left join `user_login` on((`ownerId` = `user_login`.`id`))) ;
+create view test as select `user_login`.`id` AS `id`,
+ 		`url` AS `url`,
+        `username` AS `username`,
+        `user_login`.`email` AS `email`,
+        `share`.`userId` AS `idSharedUser` 
+        from `share` 
+        left join `password` on `share`.`passwordId` = `password`.`id`
+        left join `user_login` on((`ownerId` = `user_login`.`id`))
 
---
--- Indici per le tabelle scaricate
---
+-- --------------------------------------------------------
 
 --
 -- Indici per le tabelle `password`
