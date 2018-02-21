@@ -1,20 +1,22 @@
-<?php 
+<?php
 
 include "config.php";
 session_start();
 $debug= 0;
 //Primo step, verifico se esiste il file install.php nella cartella install. Se è così rimando ad effettuare l'installazione.
+/*
 if ( file_exists("install")){
 	header('Location: install/install.php');
 	die();
 }
-	
+*/
+
 //Verifico che la sessione sia valorizzata, altrimenti mando al login
 if(!isset($_SESSION['name'])){
 			header('Location: login.php');
 		die();
-		
-} 
+
+}
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -32,7 +34,7 @@ if(!isset($_SESSION['name'])){
 <script type="text/javascript" language="javascript" src="jquery/jquery.dataTables.min.js"></script>
 <script type="text/javascript" language="javascript" src="jquery/dataTables.bootstrap.min.js"></script>
 
-	
+
 	<!-- bootstrap-3.3.7 -->
 <link rel="stylesheet" href="bootstrap-3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="css/dataTables.bootstrap.min.css">
@@ -73,10 +75,10 @@ $res = $database->select("password", "*", ["ownerId" => $_SESSION['userId']]);
   <thead>
     <tr>
       <th scope="col">#</th>
+      <th scope="col">Descrizione</th>
       <th scope="col">URL</th>
-      <th scope="col">username</th>
+      <th scope="col">Nome utente</th>
       <th scope="col">password</th>
-      <th scope="col">note</th>
       <th scope="col">Azioni</th>
     </tr>
   </thead>
@@ -88,16 +90,20 @@ foreach ($res as $r){
 	$decrypted = null;
 	$k = null;
 	if ($useStrongSecurity){
-		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $_SESSION['privkey']);	
+		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $_SESSION['privkey']);
 	} else {
 		$priv = openssl_get_privatekey($_SESSION['privkey'],$_SESSION['password']);
+<<<<<<< HEAD
 		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $priv);		 
 			 
+=======
+		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $priv);
+>>>>>>> c86af7be56750a6fcbf593442e8372424687775a
 	}
-	
-	
+
 	echo "<tr id='row_" .$r['id']. "'>" . PHP_EOL;
     echo  "<th scope='row'>" .$r['id']. "</th>" . PHP_EOL;
+    echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
     echo  "<td><a href='" .$r['url'] ."'>" .$r['url'] ."</a></td>" . PHP_EOL;
     echo   "<td>" .$r['username'] ."</td>" . PHP_EOL;
 	//Blocco mostra password
@@ -105,7 +111,6 @@ foreach ($res as $r){
           <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_" . $r['id']. "' value='$decrypted' readonly>
             <button class='btn btn-default reveal' type='button' ref='" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
           </span> </td>";
-    echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
 	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
 	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
 	$infoBox = "Data Creazione: " .  $createDate  . "<br>" .  $editDate;
@@ -113,10 +118,8 @@ foreach ($res as $r){
 			<a href='edit.php?id=" .$r['id']. "' class=''><span class='glyphicon glyphicon-edit' title='Modifica'></span>  </a> &nbsp; 
 				<a href='share.php?id=" .$r['id']. "' class=''><span class='glyphicon glyphicon-share' title='Condividi con..'></span>  </a> &nbsp; 
 				<a href='#' class='delete' id='" .$r['id']. "' ><span class='glyphicon glyphicon-remove' title='Elimina '></span>  </a>
-	
 	</td>" . PHP_EOL;
     echo "</tr>" . PHP_EOL;
-	
 }
 ?>
 
@@ -132,11 +135,11 @@ Password condivise con te </h2>
   <thead>
     <tr>
       <th scope="col">Proprietario</th>
+      <th scope="col">Descrizione</th>
       <th scope="col">URL</th>
-      <th scope="col">username</th>
+      <th scope="col">Nome utente</th>
       <th scope="col">password</th>
-      <th scope="col">Note</th>
-      <th scope="col">hint</th>
+      <th scope="col">Azioni</th>
     </tr>
   </thead>
   <tbody>
@@ -166,15 +169,13 @@ foreach ($res as $r){
 	$k = openssl_private_decrypt($r['encoded'], $decrypted, $_SESSION['privkey']);
 	echo "<tr>" . PHP_EOL;
     echo  "<th scope='row'>" .$r['full_name']. "</th>" . PHP_EOL;
+    echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
     echo  "<td><a href='" .$r['url'] ."' >" .$r['url'] ."</a></td>" . PHP_EOL;
     echo   "<td>" .$r['username'] ."</td>" . PHP_EOL;
-	
-	
 	echo "<td>
           <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_sh_" . $r['id']. "' value='$decrypted' readonly>
             <button class='btn btn-default reveal' type='button' ref='sh_" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
           </span> </td>";
-	    echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
 	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
 	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
 	$infoBox = "Data Creazione: " .  $createDate  . "<br>" .  $editDate;
@@ -195,8 +196,8 @@ Password condivise da te </h2>
 <table class="table table-striped">
   <thead>
     <tr>
-      <th scope="col">Sito di riferimento</th>
-      <th scope="col">Username</th>
+      <th scope="col">URL</th>
+      <th scope="col">Nome utente</th>
       <th scope="col">Condivisa con: </th>
       
     </tr>
@@ -257,7 +258,7 @@ $( document ).ready(function() {
 $(".campoNote").tooltip();
 
 //Attivo il sorting e search sulle tabelle
-    $('.table').DataTable();
+$('.table').DataTable();
 
 //mostra e nasconde la password	
 $(".reveal").on('click',function() {

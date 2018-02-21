@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 session_start();
 
@@ -8,7 +8,6 @@ include "config.php";
 if(!isset($_SESSION['name'])){
 			header('Location: login.php');
 		die();
-		
 }
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -25,14 +24,13 @@ require 'PHPMailer/src/SMTP.php';
 if(!isset($_GET['id'])){
 		header('Location: login.php');
 		die();
-		
 }
 
 $error = null;
 
 
 if (isset($_POST["passwordId"])){
-	
+
 	$userName = $_POST["userName"];
 	$password = $_POST["password"];
 	$passwordId = $_POST["passwordId"];
@@ -46,15 +44,13 @@ if (isset($_POST["passwordId"])){
 		   $url = "http://" . $url;
 		   }
 	}
-	
-	
+
+
 	//Recupero la chiave pubblica dell'utente corrente e provvedo a usarla per cifrare la password
 	$pubKey = $_SESSION["pubkey"];
 	$encriptedPassword = null;
 	openssl_public_encrypt($password, $encriptedPassword, $pubKey);
 
-	
-	
 	//Inserisco i dati nel database
 	$r = $database->update("password", [
 		"ownerId" => $_SESSION["userId"],
@@ -66,22 +62,22 @@ if (isset($_POST["passwordId"])){
 	if ($r->rowCount() == 0){
 			$error = $database->error();
 	} else {
-		
+
 	}
-	
+
 	//Provvedo ora ad aggiornare la password per ognuno di quelli a cui è stata condivisa la password
 	$res = $database->select("share", "*", ["passwordId" => $passwordId]);
-	
+
 	foreach ($res as $r){
 		//Recupero la chiave pubblica di ogni utente con il quale la password è stata condivisa
-		$userInfo = $database->get("user_login", ["pubkey", "notifyOnUpdate" ], ["id" => $r['userId']]);
+		$userInfo = $database->get("user_login", ["pubkey", "notifyOnUpdate", "email", "full_name" ], ["id" => $r['userId']]);
 		$ec = null;
 		openssl_public_encrypt($password, $ec, $userInfo['pubkey']);
-		
+
 		$database->update("share", ["encPassword" => $ec], ["id" => $r['id']]);
-			//verifico se vuole la notifica a mezzo mail dell'update
+		//verifico se vuole la notifica a mezzo mail dell'update
 		if ($userInfo['notifyOnUpdate'] == "1"){
-			
+
 			$mail = new PHPMailer(true);                              // Passing `true` enables exceptions
 			try {
 				//Server settings
@@ -97,6 +93,7 @@ if (isset($_POST["passwordId"])){
 				$mail->SMTPAutoTLS = false;
 				//Recipients
 				$mail->setFrom($configMailFrom, 'Gestore Password');
+
 				$mail->addAddress($userInfo['email'], $userInfo['full_name']);     // TODO: Recuperare il destinatario corretto dal db
 				// $mail->addAddress('joe@example.net', 'Joe User');     // Add a recipient
 				// $mail->addAddress('ellen@example.com');               // Name is optional
@@ -115,18 +112,12 @@ if (isset($_POST["passwordId"])){
 				$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
 				$mail->send();
-				echo 'Message has been sent';
 			} catch (Exception $e) {
 				echo 'Message could not be sent.';
 				echo 'Mailer Error: ' . $mail->ErrorInfo;
 			}
-			
 		}
-		
 	}
-	
-	
-	
 }
 
 //Recupero i dati dal database (Si, la query rigira anche se ho appena fatto l'update.. si può migliorare ma al momento va bene così)
@@ -136,8 +127,6 @@ $res = $database->get("password", "*", [ "id" => $_GET['id']]);
 $decrypted = null;
 openssl_private_decrypt($res['encPassword'], $decrypted, $_SESSION['privkey']);
 
-	
-	
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -167,25 +156,28 @@ include ("includes/menu.php");
 <br>
 <form method='post' action='<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>?id=<?php echo $_GET['id']?>'>
   <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="inputEmail4">nome utente</label>
-      <input type="text" class="form-control" id="inputEmail4" placeholder="Nome utente del sito" name='userName' value='<?php echo $res['username'] ?>'>
-    </div>
-    <div class="form-group col-md-6">
-      <label for="inputPassword4">Password</label>
-      <input type="text" class="form-control" id="inputPassword4" placeholder="Password" name='password' value='<?php echo $decrypted ?>'>
-    </div>
+	    <label for="exampleFormControlTextarea1">Descrizione</label>
+    	<textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name='note' ><?php echo $res['note'] ?></textarea>
   </div>
-  <div class="form-group">
+  <div class="form-row">
+  	<div class="form-group">
+    	<label for="inputEmail4">Nome utente</label>
+	    <input type="text" class="form-control" id="inputEmail4" placeholder="Nome utente del sito" name='userName' value='<?php echo $res['username'] ?>'>
+	</div>
+	<div class="form-group">
+    	<label for="inputPassword4">Password</label>
+	    <input type="text" class="form-control" id="inputPassword4" placeholder="Password" name='password' value='<?php echo $decrypted ?>'>
+	</div>
+  </div>
+  <div class="form-row">
     <label for="inputAddress">URL</label>
     <input type="text" class="form-control" id="inputAddress" placeholder="https://" name='url' value='<?php echo $res['url'] ?>'>
   </div>
-    <div class="form-group">
-    <label for="exampleFormControlTextarea1">Note</label>
-    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name='note' ><?php echo $res['note'] ?></textarea>
+  <div class="form-row">
+	</br>
+	<input type='hidden' name='passwordId' value='<?php echo $_GET['id']?>'>
+	<button type="submit" class="btn btn-primary">Aggiorna</button>
   </div>
-  <input type='hidden' name='passwordId' value='<?php echo $_GET['id']?>'>
-  <button type="submit" class="btn btn-primary">Aggiorna</button>
 </form>
 
 
@@ -193,8 +185,6 @@ include ("includes/menu.php");
 </div>
 <?php
 if ($debug){
-	
-	
 	echo "<pre>" . $_SESSION['privkey'] . "</pre>";
 }
 ?>

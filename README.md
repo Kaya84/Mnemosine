@@ -3,7 +3,6 @@ Password manager and sharer
 
 
 
-
 # Mnemosine (ITA)
 
 
