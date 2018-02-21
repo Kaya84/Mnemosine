@@ -1,20 +1,22 @@
-<?php 
+<?php
 
 include "config.php";
 session_start();
 $debug= 0;
 //Primo step, verifico se esiste il file install.php nella cartella install. Se è così rimando ad effettuare l'installazione.
+/*
 if ( file_exists("install")){
 	header('Location: install/install.php');
 	die();
 }
-	
+*/
+
 //Verifico che la sessione sia valorizzata, altrimenti mando al login
 if(!isset($_SESSION['name'])){
 			header('Location: login.php');
 		die();
-		
-} 
+
+}
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -32,7 +34,7 @@ if(!isset($_SESSION['name'])){
 <script type="text/javascript" language="javascript" src="jquery/jquery.dataTables.min.js"></script>
 <script type="text/javascript" language="javascript" src="jquery/dataTables.bootstrap.min.js"></script>
 
-	
+
 	<!-- bootstrap-3.3.7 -->
 <link rel="stylesheet" href="bootstrap-3.3.7/css/bootstrap.min.css">
 <link rel="stylesheet" href="css/dataTables.bootstrap.min.css">
