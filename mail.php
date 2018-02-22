@@ -2,7 +2,7 @@
 use PHPMailer\PHPMailer\PHPMailer;
 //faccio un check se config.php è stato caricato per scrupolo
 if (!defined("CONFIG_LOADED")){
-	require "config.php";
+	require_once( "config.php)";
 }
 
 require 'PHPMailer/src/Exception.php';
