@@ -88,10 +88,11 @@ create view v_sharedWith as select `user_login`.`id` AS `id`,
  		`url` AS `url`,
         `username` AS `username`,
         `user_login`.`email` AS `email`,
-        `share`.`userId` AS `idSharedUser` 
+        `share`.`userId` AS `idSharedUser`,
+        `password`.`note` AS `passwordnote`
         from `share` 
         left join `password` on `share`.`passwordId` = `password`.`id`
-        left join `user_login` on((`ownerId` = `user_login`.`id`))
+        left join `user_login` on((`ownerId` = `user_login`.`id`));
 
 -- --------------------------------------------------------
 
