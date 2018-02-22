@@ -1,6 +1,20 @@
 <?php
 
 //
+// funzione utilizzata per la cancellazione di una password
+//
+function cancellapassword($id) {
+	global $database;
+
+	//Primo step elimino tutte le condivisioni di quella password
+	$database->delete("share", ["passwordId" => $id]);
+
+	//elimino ora la password
+	$database->delete("password", ["id" => $id]);
+
+}
+
+//
 // Funzione utilizzata per creare un nuovo utente al volo
 //
 function newuser($full_name,$email,$password) {

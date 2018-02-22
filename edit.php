@@ -3,6 +3,7 @@
 session_start();
 
 include "config.php";
+include "funzioni.php";
 
 //Verifico che la sessione sia valorizzata, altrimenti mando al login
 if(!isset($_SESSION['name'])){
@@ -27,6 +28,13 @@ if(!isset($_GET['id'])){
 }
 
 $error = null;
+
+// verifico se e' stato selezionato il flag "Elimina password corrente"
+if (isset($_POST["checkElimina"])){
+	cancellapassword($_GET['id']);
+	header('Location: index.php');
+	die();
+}
 
 
 if (isset($_POST["passwordId"])){
@@ -170,13 +178,20 @@ include ("includes/menu.php");
 	</div>
   </div>
   <div class="form-row">
-    <label for="inputAddress">URL</label>
-    <input type="text" class="form-control" id="inputAddress" placeholder="https://" name='url' value='<?php echo $res['url'] ?>'>
+  	<div class="form-group">
+	    <label for="inputAddress">URL</label>
+    	<input type="text" class="form-control" id="inputAddress" placeholder="https://" name='url' value='<?php echo $res['url'] ?>'>
+	  </div>
+  </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="checkElimina" name="checkElimina">
+    <label class="form-check-label" for="checkElimina">Elimina la password corrente</label>
   </div>
   <div class="form-row">
 	</br>
 	<input type='hidden' name='passwordId' value='<?php echo $_GET['id']?>'>
 	<button type="submit" class="btn btn-primary">Aggiorna</button>
+	<a class="btn btn-success" href="/index.php" role="button">Chiudi</a>
   </div>
 </form>
 

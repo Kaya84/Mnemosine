@@ -62,6 +62,11 @@ include ("includes/menu.php");
 ?>
 
 <div class="container">
+
+<div class="alert alert-info collapse" id="successClipboard">
+      <strong>Attenzione: </strong>Password copiata negli appunti !
+</div>
+
 <div class='text-center'><h2>Password gestite </h2></div>
 
 <?php
@@ -105,14 +110,15 @@ foreach ($res as $r){
 	echo 			  "<td>
           <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_" . $r['id']. "' value='$decrypted' readonly>
             <button class='btn btn-default reveal' type='button' ref='" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
+            <button class='btn btn-default clipboard' type='button' ref='" .$r['id']."'><i class='glyphicon glyphicon-file'></i></button>
           </span> </td>";
 	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
 	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
 	$infoBox = "Data Creazione: " .  $createDate  . "<br>" .  $editDate;
-	echo  " <td><a href='#'><span class='campoNote glyphicon glyphicon-info-sign' data-toggle='tooltip' data-html='true' data-placement='top' title='$infoBox'></span></a> &nbsp; 
+	echo  " <td>
+			<a href='#'><span class='campoNote glyphicon glyphicon-info-sign' data-toggle='tooltip' data-html='true' data-placement='top' title='$infoBox'></span></a> &nbsp; 
 			<a href='edit.php?id=" .$r['id']. "' class=''><span class='glyphicon glyphicon-edit' title='Modifica'></span>  </a> &nbsp; 
-				<a href='share.php?id=" .$r['id']. "' class=''><span class='glyphicon glyphicon-share' title='Condividi con..'></span>  </a> &nbsp; 
-				<a href='#' class='delete' id='" .$r['id']. "' ><span class='glyphicon glyphicon-remove' title='Elimina '></span>  </a>
+			<a href='share.php?id=" .$r['id']. "' class=''><span class='glyphicon glyphicon-share' title='Condividi con..'></span>  </a> &nbsp; 
 	</td>" . PHP_EOL;
     echo "</tr>" . PHP_EOL;
 }
@@ -170,17 +176,18 @@ foreach ($res as $r){
 	echo "<td>
           <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_sh_" . $r['id']. "' value='$decrypted' readonly>
             <button class='btn btn-default reveal' type='button' ref='sh_" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
+            <button class='btn btn-default clipboard' type='button' ref='sh_" .$r['id']."'><i class='glyphicon glyphicon-file'></i></button>
           </span> </td>";
 	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
 	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
 	$infoBox = "Data Creazione: " .  $createDate  . "<br>" .  $editDate;
 	echo  " <td><a href='#'><span class='campoNote glyphicon glyphicon-info-sign' data-toggle='tooltip' data-html='true' data-placement='top' title='$infoBox'></span></a> &nbsp; </td>";
-	
+
     echo "</tr>" . PHP_EOL;
-	
+
 }
   ?>
-  
+
   </tbody>
 </table>
 <br>
@@ -194,7 +201,6 @@ Password condivise da te </h2>
       <th scope="col">URL</th>
       <th scope="col">Nome utente</th>
       <th scope="col">Condivisa con: </th>
-      
     </tr>
   </thead>
   <tbody>
@@ -222,55 +228,52 @@ foreach ($res as $r){
     // echo  " <td>" .$decrypted ."</td>" . PHP_EOL;
     // echo  " <td>-----</td>" . PHP_EOL;
     echo "</tr>" . PHP_EOL;
-	
-} 
+}
   ?>
-  
+
   </tbody>
 </table>
 </div>
 
 
 <script>
+//
+// gestisco tramite javascript funzioni particolari (es. mostra/nascondi password, tooltip...
+//
 $( document ).ready(function() {
-	$( "a.delete" ).on( "click", function() {
-		
-		var id = $(this).attr("id");
-		$.get( "delete.php", { 
-			"id" : id
-				} ).done(function( data ) {
-					// alert( "Data Loaded: " + data['res'] );
-					if (data.res == 0){
-						$("#row_" + id).remove();
-					} else {
-					
-						alert("Oh-oh");
-					}
-			  }, "json");
-	
-});
-//Attivo i tooltip per il campo note
-$(".campoNote").tooltip();
+	//Attivo i tooltip per il campo note
+	$(".campoNote").tooltip();
 
-//Attivo il sorting e search sulle tabelle
-$('.table').DataTable();
+	//Attivo il sorting e search sulle tabelle
+	$('.table').DataTable();
 
-//mostra e nasconde la password	
-$(".reveal").on('click',function() {
-	// alert($(this).attr('ref'));
-    var $pwd = $("#pwd_" + $(this).attr('ref'));
-    if ($pwd.attr('type') === 'password') {
+	//mostra e nasconde la password	
+	$(".reveal").on('click',function() {
+		// alert($(this).attr('ref'));
+	    var $pwd = $("#pwd_" + $(this).attr('ref'));
+	    if ($pwd.attr('type') === 'password') {
+	        $pwd.attr('type', 'text');
+	    } else {
+	        $pwd.attr('type', 'password');
+	    }
+	});
+
+	//copia la password negli appunti
+	$(".clipboard").on('click',function() {
+		// alert($(this).attr('ref'));
+	    var $pwd = $("#pwd_" + $(this).attr('ref'));
         $pwd.attr('type', 'text');
-    } else {
+		$pwd.select();
+		document.execCommand("Copy");
         $pwd.attr('type', 'password');
-    }
-});
+		$("#successClipboard").fadeIn(1000).delay(1000).fadeOut(1000);
+	});
+
 });
 </script>
+
 <?php
 if ($debug){
-	
-	
 	echo "<pre>" . $_SESSION['privkey'] . "</pre>";
 }
 ?>
