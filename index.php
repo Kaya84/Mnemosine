@@ -94,11 +94,15 @@ foreach ($res as $r){
 	} else {
 		$priv = openssl_get_privatekey($_SESSION['privkey'],$_SESSION['password']);
 <<<<<<< HEAD
+<<<<<<< HEAD
 		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $priv);		 
 			 
 =======
 		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $priv);
 >>>>>>> c86af7be56750a6fcbf593442e8372424687775a
+=======
+		$k = openssl_private_decrypt($r['encPassword'], $decrypted, $priv);
+>>>>>>> 1c3180a36f0cf2818c32f712b0a77d96aeabeaf1
 	}
 
 	echo "<tr id='row_" .$r['id']. "'>" . PHP_EOL;

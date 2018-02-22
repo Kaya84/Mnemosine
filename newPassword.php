@@ -89,15 +89,24 @@ if ($newPassword){
 <br>
 <form method='post'>
   <div class="form-row">
+<<<<<<< HEAD
     <div class="form-group col-md-6">
       <label for="inputEmail4">nome utente</label>
       <input type="text" class="form-control" id="inputEmail4" placeholder="Nome utente del sito" name='userName'>
     </div>
     <div class="form-group col-md-6">
+=======
+    <div class="form-group">
+      <label for="inputEmail4">Nome utente</label>
+      <input type="text" class="form-control" id="inputEmail4" placeholder="Nome utente del sito" name='userName'>
+    </div>
+    <div class="form-group">
+>>>>>>> 1c3180a36f0cf2818c32f712b0a77d96aeabeaf1
       <label for="inputPassword4">Password</label>
       <input type="text" class="form-control" id="inputPassword4" placeholder="Password" name='password'>
     </div>
   </div>
+<<<<<<< HEAD
   <div class="form-group">
     <label for="inputAddress">URL</label>
     <input type="text" class="form-control" id="inputAddress" placeholder="https://" name='url'>
@@ -105,6 +114,19 @@ if ($newPassword){
     <div class="form-group">
     <label for="exampleFormControlTextarea1">Note</label>
     <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name='note'></textarea>
+=======
+  <div class="form-row">
+	<div class="form-group">
+    	<label for="inputAddress">URL</label>
+	    <input type="text" class="form-control" id="inputAddress" placeholder="https://" name='url'>
+	</div>
+  </div>
+  <div class="form-row">
+	<div class="form-group">
+	    <label for="exampleFormControlTextarea1">Descrizione</label>
+	    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name='note'></textarea>
+	</div>
+>>>>>>> 1c3180a36f0cf2818c32f712b0a77d96aeabeaf1
   </div>
   <input type='hidden' name='check' value='1'>
   <button type="submit" class="btn btn-primary">Memorizza</button>
