@@ -28,7 +28,8 @@ Scompattare l'archivio in una cartella
 
 Installare un mysql server e costruire la struttura importando il file database.sql
 
-Inserire i parametri nel file config.php
+Copiare il file config.php.default in config.php
+Inserire i parametri di configurazione nel file config.php
 
 OPT: Abilitare HTTPS (si può usare let's encrypt esponendo temporaneamente la porta all'esterno)
 
