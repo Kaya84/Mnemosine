@@ -4,22 +4,13 @@ session_start();
 
 require_once("config.php");
 require_once("funzioni.php");
+require_once("mail.php");
 
 //Verifico che la sessione sia valorizzata, altrimenti mando al login
 if(!isset($_SESSION['name'])){
 			header('Location: login.php');
 		die();
 }
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'PHPMailer/src/Exception.php';
-require 'PHPMailer/src/PHPMailer.php';
-require 'PHPMailer/src/SMTP.php';
-
-
-//Verifico ci sia il campo id nell'url altrimenti rimando al login:
-
 
 //Verifico che la sessione sia valorizzata, altrimenti mando al login
 if(!isset($_GET['id'])){
@@ -86,46 +77,19 @@ if (isset($_POST["passwordId"])){
 		//verifico se vuole la notifica a mezzo mail dell'update
 		if ($userInfo['notifyOnUpdate'] == "1"){
 
-			$mail = new PHPMailer(true);                              // Passing `true` enables exceptions
-			try {
-				//Server settings
-				$mail->SMTPDebug = $SMTPDebug;                                 // Enable verbose debug output
-				$mail->isSMTP();                                      // Set mailer to use SMTP
-				$mail->Host = $configMailSmtp;  					  // Specify main and backup SMTP servers
-				$mail->SMTPAuth = false;                               // Enable SMTP authentication
-				$mail->Username = $configMailFrom ;                   // SMTP username
-				//$mail->Password = 'secret';                           // SMTP password
-				//$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-				//$mail->Port = 587;                                    // TCP port to connect to
-				$mail->SMTPSecure = false;
-				$mail->SMTPAutoTLS = false;
-				//Recipients
-				$mail->setFrom($configMailFrom, 'Gestore Password');
+ 			mnemosineSendMail($userInfo['email'], $userInfo['full_name'], 
+				"Password modificata", 
+				"Descrizione: " . $note . ", URL: " . $url . " - password modificata",
+				"<b>Descrizione: </b>" . $note . ", <b>URL: </b>" . $url . " - password modificata"
+			);
 
-				$mail->addAddress($userInfo['email'], $userInfo['full_name']);     // TODO: Recuperare il destinatario corretto dal db
-				// $mail->addAddress('joe@example.net', 'Joe User');     // Add a recipient
-				// $mail->addAddress('ellen@example.com');               // Name is optional
-				$mail->addReplyTo($configMailFrom, 'Gestore password');
-				// $mail->addCC('cc@example.com');
-				// $mail->addBCC('bcc@example.com');
-
-				//Attachments
-				// $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-				// $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
-				$mail->setLanguage('it');
-				//Content
-				$mail->isHTML(true);                                  // Set email format to HTML
-				$mail->Subject = 'Here is the subject';
-				$mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-				$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
-				$mail->send();
-			} catch (Exception $e) {
-				echo 'Message could not be sent.';
-				echo 'Mailer Error: ' . $mail->ErrorInfo;
-			}
 		}
 	}
+
+	// riporto l'utente alla pagina index.php
+	header('Location: index.php');
+	die();
+
 }
 
 //Recupero i dati dal database (Si, la query rigira anche se ho appena fatto l'update.. si può migliorare ma al momento va bene così)
@@ -205,5 +169,3 @@ if ($debug){
 ?>
 </body>
 </html>
-
-

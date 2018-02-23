@@ -107,7 +107,7 @@ foreach ($res as $r){
     echo "<th scope='row'>" .$r['id']. "</th>" . PHP_EOL;
     echo "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
     echo "<td><a href='" .$r['url'] ."'>" .$r['url'] ."</a></td>" . PHP_EOL;
-    echo "<td> <span data-toggle='tooltip' data-placement='top' id='username_" .$r['id']. "'>" .$r['username']. "</span>" . PHP_EOL;
+    echo "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' id='username_" .$r['id']. "'>" .$r['username']. "</span>" . PHP_EOL;
     echo "<button class='btn btn-default' data-clipboard-target='#username_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button></td>" . PHP_EOL;
 	echo "<td>
           <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_" . $r['id']. "' value='$decrypted' readonly>
@@ -120,7 +120,6 @@ foreach ($res as $r){
 	echo  " <td><a href='#'><span class='campoNote glyphicon glyphicon-info-sign' data-toggle='tooltip' data-html='true' data-placement='top' title='$infoBox'></span></a> &nbsp; 
 			<a href='edit.php?id=" .$r['id']. "' class=''><span class='glyphicon glyphicon-edit' title='Modifica'></span>  </a> &nbsp; 
 				<a href='share.php?id=" .$r['id']. "' class=''><span class='glyphicon glyphicon-share' title='Condividi con..'></span>  </a> &nbsp; 
-				<a href='#' class='delete' id='" .$r['id']. "' ><span class='glyphicon glyphicon-remove' title='Elimina '></span>  </a>
 	</td>" . PHP_EOL;
     echo "</tr>" . PHP_EOL;
 }
@@ -266,7 +265,31 @@ $( document ).ready(function() {
 	$(".campoNote").tooltip();
 
 	//Attivo il sorting e search sulle tabelle
-	$('.table').DataTable();
+	$('.table').DataTable( {
+		"language": {
+			"sEmptyTable":     "Nessun dato presente nella tabella",
+		    "sInfo":           "Vista da _START_ a _END_ di _TOTAL_ elementi",
+		    "sInfoEmpty":      "Vista da 0 a 0 di 0 elementi",
+		    "sInfoFiltered":   "(filtrati da _MAX_ elementi totali)",
+		    "sInfoPostFix":    "",
+		    "sInfoThousands":  ".",
+		    "sLengthMenu":     "Visualizza _MENU_ elementi",
+		    "sLoadingRecords": "Caricamento...",
+		    "sProcessing":     "Elaborazione...",
+		    "sSearch":         "Cerca:",
+		    "sZeroRecords":    "La ricerca non ha portato alcun risultato.",
+		    "oPaginate": {
+		        "sFirst":      "Inizio",
+		        "sPrevious":   "Precedente",
+		        "sNext":       "Successivo",
+		        "sLast":       "Fine"
+		    },
+		    "oAria": {
+		        "sSortAscending":  ": attiva per ordinare la colonna in ordine crescente",
+		        "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
+		    }
+        }
+	});
 
 	//mostra e nasconde la password	
 	$(".reveal").on('click',function() {
