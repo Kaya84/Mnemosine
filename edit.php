@@ -2,8 +2,8 @@
 
 session_start();
 
-include "config.php";
-include "funzioni.php";
+require_once("config.php");
+require_once("funzioni.php");
 
 //Verifico che la sessione sia valorizzata, altrimenti mando al login
 if(!isset($_SESSION['name'])){

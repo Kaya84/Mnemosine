@@ -1,6 +1,6 @@
 <?php
 
-include "includes/Medoo.php";
+require_once("includes/Medoo.php");
 
 // parametri di configurazione per gestire l'autenticazione dell'utente tramite LDAP
 $AD_LDAP = [
