@@ -63,14 +63,11 @@ include ("includes/menu.php");
 ?>
 
 <div class="container">
-<<<<<<< HEAD
 
 <div class="alert alert-info collapse" id="successClipboardCopy">
       <strong>Attenzione: </strong>Copia negli appunti effettuata correttamente !
 </div>
 
-=======
->>>>>>> 5b0075227478f8ca7041ad0dbdeff4440b88caa5
 <div class='text-center'><h2>Password gestite </h2></div>
 
 <?php
@@ -114,12 +111,8 @@ foreach ($res as $r){
     echo "<button class='btn btn-default' data-clipboard-target='#username_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button></td>" . PHP_EOL;
 	echo "<td>
           <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_" . $r['id']. "' value='$decrypted' readonly>
-<<<<<<< HEAD
-            <button class='btn btn-default reveal' type='button' title='Mostra' ref='" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
+            <button class='btn btn-default reveal' type='button' title='Mostra' ref='pwd_" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
             <button class='btn btn-default' data-clipboard-target='#pwd_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button>
-=======
-            <button class='btn btn-default reveal' type='button' ref='" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
->>>>>>> 5b0075227478f8ca7041ad0dbdeff4440b88caa5
           </span> </td>";
 	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
 	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
@@ -185,12 +178,8 @@ foreach ($res as $r){
     echo "<button class='btn btn-default' data-clipboard-target='#sh_username_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button></td>" . PHP_EOL;
 	echo "<td>
           <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_sh_" . $r['id']. "' value='$decrypted' readonly>
-<<<<<<< HEAD
-            <button class='btn btn-default reveal' type='button' title='Mostra' ref='sh_" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
+            <button class='btn btn-default reveal' type='button' title='Mostra' ref='pwd_sh_" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
             <button class='btn btn-default' data-clipboard-target='#pwd_sh_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button>
-=======
-            <button class='btn btn-default reveal' type='button' ref='sh_" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
->>>>>>> 5b0075227478f8ca7041ad0dbdeff4440b88caa5
           </span> </td>";
 	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
 	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
@@ -241,7 +230,6 @@ foreach ($res as $r){
 
 
 <script>
-<<<<<<< HEAD
 
 function copyToClipboard(text){
     var dummy = document.createElement("input");
@@ -283,7 +271,7 @@ $( document ).ready(function() {
 	//mostra e nasconde la password	
 	$(".reveal").on('click',function() {
 		// alert($(this).attr('ref'));
-	    var $pwd = $("#pwd_" + $(this).attr('ref'));
+	    var $pwd = $("#" + $(this).attr('ref'));
 	    if ($pwd.attr('type') === 'password') {
 	        $pwd.attr('type', 'text');
 	    } else {
@@ -291,47 +279,11 @@ $( document ).ready(function() {
 	    }
 	});
 
-=======
-$( document ).ready(function() {
-	$( "a.delete" ).on( "click", function() {
-		
-		var id = $(this).attr("id");
-		$.get( "delete.php", { 
-			"id" : id
-				} ).done(function( data ) {
-					// alert( "Data Loaded: " + data['res'] );
-					if (data.res == 0){
-						$("#row_" + id).remove();
-					} else {
-					
-						alert("Oh-oh");
-					}
-			  }, "json");
-	
 });
-//Attivo i tooltip per il campo note
-$(".campoNote").tooltip();
 
-//Attivo il sorting e search sulle tabelle
-$('.table').DataTable();
-
-//mostra e nasconde la password	
-$(".reveal").on('click',function() {
-	// alert($(this).attr('ref'));
-    var $pwd = $("#pwd_" + $(this).attr('ref'));
-    if ($pwd.attr('type') === 'password') {
-        $pwd.attr('type', 'text');
-    } else {
-        $pwd.attr('type', 'password');
-    }
-});
->>>>>>> 5b0075227478f8ca7041ad0dbdeff4440b88caa5
-});
 </script>
 <?php
 if ($debug){
-	
-	
 	echo "<pre>" . $_SESSION['privkey'] . "</pre>";
 }
 ?>
