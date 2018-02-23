@@ -28,6 +28,8 @@ if(!isset($_SESSION['name'])){
 <!-- JQUERY -->
 <!--<script type="text/javascript" language="javascript" src="jquery/jquery.js"></script> /-->
 
+<script type="text/javascript" language="javascript" src="jquery/clipboard.min.js"></script>
+
 <script type="text/javascript" language="javascript" src="jquery/jquery-1.12.4.js"></script>
 
 <!-- REf: https://datatables.net/examples/styling/bootstrap.html /-->
@@ -63,8 +65,8 @@ include ("includes/menu.php");
 
 <div class="container">
 
-<div class="alert alert-info collapse" id="successClipboard">
-      <strong>Attenzione: </strong>Password copiata negli appunti !
+<div class="alert alert-info collapse" id="successClipboardCopy">
+      <strong>Attenzione: </strong>Copia negli appunti effettuata correttamente !
 </div>
 
 <div class='text-center'><h2>Password gestite </h2></div>
@@ -102,15 +104,15 @@ foreach ($res as $r){
 	}
 
 	echo "<tr id='row_" .$r['id']. "'>" . PHP_EOL;
-    echo  "<th scope='row'>" .$r['id']. "</th>" . PHP_EOL;
-    echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
-    echo  "<td><a href='" .$r['url'] ."'>" .$r['url'] ."</a></td>" . PHP_EOL;
-    echo   "<td>" .$r['username'] ."</td>" . PHP_EOL;
-	//Blocco mostra password
-	echo 			  "<td>
+    echo "<th scope='row'>" .$r['id']. "</th>" . PHP_EOL;
+    echo "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
+    echo "<td><a href='" .$r['url'] ."'>" .$r['url'] ."</a></td>" . PHP_EOL;
+    echo "<td> <span data-toggle='tooltip' data-placement='top' id='username_" .$r['id']. "'>" .$r['username']. "</span>" . PHP_EOL;
+    echo "<button class='btn btn-default' data-clipboard-target='#username_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button></td>" . PHP_EOL;
+	echo "<td>
           <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_" . $r['id']. "' value='$decrypted' readonly>
-            <button class='btn btn-default reveal' type='button' ref='" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
-            <button class='btn btn-default clipboard' type='button' ref='" .$r['id']."'><i class='glyphicon glyphicon-file'></i></button>
+            <button class='btn btn-default reveal' type='button' title='Mostra' ref='" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
+            <button class='btn btn-default' data-clipboard-target='#pwd_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button>
           </span> </td>";
 	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
 	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
@@ -172,11 +174,12 @@ foreach ($res as $r){
     echo  "<th scope='row'>" .$r['full_name']. "</th>" . PHP_EOL;
     echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
     echo  "<td><a href='" .$r['url'] ."' >" .$r['url'] ."</a></td>" . PHP_EOL;
-    echo   "<td>" .$r['username'] ."</td>" . PHP_EOL;
+    echo "<td> <span data-toggle='tooltip' data-placement='top' id='sh_username_" .$r['id']. "'>" .$r['username']. "</span>" . PHP_EOL;
+    echo "<button class='btn btn-default' data-clipboard-target='#sh_username_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button></td>" . PHP_EOL;
 	echo "<td>
           <span class='input-group-btn'><input type='password' class='form-control pwd' id='pwd_sh_" . $r['id']. "' value='$decrypted' readonly>
-            <button class='btn btn-default reveal' type='button' ref='sh_" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
-            <button class='btn btn-default clipboard' type='button' ref='sh_" .$r['id']."'><i class='glyphicon glyphicon-file'></i></button>
+            <button class='btn btn-default reveal' type='button' title='Mostra' ref='sh_" .$r['id']."'><i class='glyphicon glyphicon-eye-open'></i></button>
+            <button class='btn btn-default' data-clipboard-target='#pwd_sh_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button>
           </span> </td>";
 	$createDate = date( 'd/m/Y H:i:s',strtotime( $r['creationDate']));
 	$editDate = ($r['editDate'] == "")? "" : "Data modifica: " . date( 'd/m/Y H:i:s',strtotime( $r['editDate']));
@@ -206,19 +209,7 @@ Password condivise da te </h2>
   <tbody>
   <?php
 
-  $res = $database->select("v_sharedWith",
-						[
-							"[>]user_login" => ["v_sharedWith.idSharedUser" => "id"]
-						],
-						[
-							// "v_sharedWith.encPassword (encoded)",
-							// "v_sharedWith.full_name*",
-							"v_sharedWith.url",
-							"v_sharedWith.username",
-							"v_sharedWith.idSharedUser",
-							"user_login.full_name"
-						], 
-						[ "v_sharedWith.id" => $_SESSION['userId'] ]);
+  $res = $database->select("v_sharedWith","*",[ "v_sharedWith.id" => $_SESSION['userId'] ]);
 
 foreach ($res as $r){
  echo "<tr>" . PHP_EOL;
@@ -237,6 +228,34 @@ foreach ($res as $r){
 
 
 <script>
+
+function copyToClipboard(text){
+    var dummy = document.createElement("input");
+    document.body.appendChild(dummy);
+    dummy.setAttribute('value', text);
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+}
+
+// Gestisco i pulsanti copia nella clipboard sfruttando questo plugin https://clipboardjs.com/
+var clipboard = new Clipboard('.btn', {
+    container: document.getElementById('modal')
+});
+
+clipboard.on('success', function(e) {
+	$("#successClipboardCopy").fadeIn(1000).delay(1000).fadeOut(1000);
+	// questo trucchetto lo devo usare per gestire il copia delle password che altrimenti non ne vogliono sapere di funzionare !
+	copyToClipboard(e.text);
+    e.clearSelection();
+});
+
+clipboard.on('error', function(e) {
+    console.error('Action:', e.action);
+    console.error('Trigger:', e.trigger);
+});
+
+
 //
 // gestisco tramite javascript funzioni particolari (es. mostra/nascondi password, tooltip...
 //
@@ -256,17 +275,6 @@ $( document ).ready(function() {
 	    } else {
 	        $pwd.attr('type', 'password');
 	    }
-	});
-
-	//copia la password negli appunti
-	$(".clipboard").on('click',function() {
-		// alert($(this).attr('ref'));
-	    var $pwd = $("#pwd_" + $(this).attr('ref'));
-        $pwd.attr('type', 'text');
-		$pwd.select();
-		document.execCommand("Copy");
-        $pwd.attr('type', 'password');
-		$("#successClipboard").fadeIn(1000).delay(1000).fadeOut(1000);
 	});
 
 });
