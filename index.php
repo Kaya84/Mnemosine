@@ -106,7 +106,7 @@ foreach ($res as $r){
 	echo "<tr id='row_" .$r['id']. "'>" . PHP_EOL;
     echo "<th scope='row'>" .$r['id']. "</th>" . PHP_EOL;
     echo "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
-    echo "<td><a href='" .$r['url'] ."'>" .$r['url'] ."</a></td>" . PHP_EOL;
+	echo "<td><a href='" .$r['url'] ."' target='_blank'>" .$r['url'] ."</a></td>" . PHP_EOL;
     echo "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' id='username_" .$r['id']. "'>" .$r['username']. "</span>" . PHP_EOL;
     echo "<button class='btn btn-default' data-clipboard-target='#username_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button></td>" . PHP_EOL;
 	echo "<td>
@@ -172,7 +172,7 @@ foreach ($res as $r){
 	echo "<tr>" . PHP_EOL;
     echo  "<th scope='row'>" .$r['full_name']. "</th>" . PHP_EOL;
     echo   "<td> <span class='campoNote' data-toggle='tooltip' data-placement='top' title='" . $r['note'] ."'>" .substr($r['note'], 0,50) ."</span></td>" . PHP_EOL;
-    echo  "<td><a href='" .$r['url'] ."' >" .$r['url'] ."</a></td>" . PHP_EOL;
+    echo  "<td><a href='" .$r['url'] ."' target='_blank'>" .$r['url'] ."</a></td>" . PHP_EOL;
     echo "<td> <span data-toggle='tooltip' data-placement='top' id='sh_username_" .$r['id']. "'>" .$r['username']. "</span>" . PHP_EOL;
     echo "<button class='btn btn-default' data-clipboard-target='#sh_username_" .$r['id']. "' type='button' title='Copia'><i class='glyphicon glyphicon-file'></i></button></td>" . PHP_EOL;
 	echo "<td>
