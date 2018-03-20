@@ -215,9 +215,7 @@ foreach ($res as $r){
  echo "<tr>" . PHP_EOL;
      echo  "<th scope='row'>" .$r['url']. "</th>" . PHP_EOL;
      echo  "<td>" .$r['username'] ."</td>" . PHP_EOL;
-    echo   "<td>" .$r['full_name'] ."</td>" . PHP_EOL;
-    // echo  " <td>" .$decrypted ."</td>" . PHP_EOL;
-    // echo  " <td>-----</td>" . PHP_EOL;
+    echo   "<td>" .$r['sharedUserFullName'] ."</td>" . PHP_EOL;
     echo "</tr>" . PHP_EOL;
 	
 } 
