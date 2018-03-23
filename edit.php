@@ -79,8 +79,10 @@ if (isset($_POST["passwordId"])){
 
  			mnemosineSendMail($userInfo['email'], $userInfo['full_name'], 
 				"Password modificata", 
-				"Descrizione: " . $note . ", URL: " . $url . " - password modificata",
-				"<b>Descrizione: </b>" . $note . ", <b>URL: </b>" . $url . " - password modificata"
+				"La password del sito " . $note . " [ URL: " . $url . " ] &egrave; stata modificata dal proprietaro" . PHP_EOL . 
+				"Questa mail viene spedita per sola notifica. Nessuna ulteriore azione &egrave; richiesta",
+				"La password del sito " . $note . " [ <a href='$url'>" . $url . "</a> ] &egrave; stata modificata dal proprietaro<br>" . PHP_EOL . 
+				"Questa mail viene spedita per sola notifica. Nessuna ulteriore azione &egrave; richiesta"
 			);
 
 		}
