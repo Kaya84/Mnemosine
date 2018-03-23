@@ -112,7 +112,7 @@ if ($newPassword){
   </div>
   <input type='hidden' name='check' value='1'>
   <button type="submit" class="btn btn-primary">Memorizza</button>
-  <a class="btn btn-success" href="/index.php" role="button">Chiudi</a>
+  <a class="btn btn-success" href="index.php" role="button">Home</a>
 </form>
 
 
