@@ -31,6 +31,19 @@ $configMailSmtp = "localhost";
 $SMTPDebug = 0 ; //Questo parametro corrisponde alla configurazione di PHPMAiler
 //Abilita o disabilita il form di registrazione
 $isRegistrationEnabled = false;
+//Se true allora manda mail di conferma per attivazione, false altrimenti e non manda alcuna mail. E' implicitamente attivo
+$requestMailActivation = true;
+//Se è attiva la registrazione, verifica che la mail faccia parte di un dominio.
+//E' possibile indicare più domini separati dal ; oppure mettere * per indicare tutto
+//$allowedDomains = "*";
+$allowedDomains = "example.com";
+//Hardening sui requisiti password
+//Numero minimo caratteri password
+$minLengthPassword = 6;
+//Uso di caratteri speciali obbligatorio ( 1 o 0)
+$useSpecialChars = 1;
+
+
 //Se impostato a 1, la chiave privata è generata partendo dalla password utente. 0 Altrimenti
 //Se questa voce viene impostata a 1 e l'utente perde la propria password, le SUE password salvate sono IRRECUPERABILI
 //Se viene impostata a 0 le password sono recuperabili in quanto la chiave privata salvata nel DB non è protetta
