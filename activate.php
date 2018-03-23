@@ -6,16 +6,15 @@ if (empty($_GET['guid'])){
 	die("ERROR: no GUID set");
 }
 
-$guid = $_GET['guid'];
 
-$res = $database->get("activation", "*", [ "guid" => $guid]);
+$guid = $_GET['guid'];
+//Ricerco il dato nel DB ma solo se la richiesta di attivazione è stata fatta nelle 24 ore precedenti (per evitare brute force)
+$res = $database->get("activation", "*", [ "AND" => [ "guid" => $guid, "date[>]" => date('Y-m-d H:i:s', strtotime("-1 days")) ]]);
 if (!$res){
 	
 	die ("ERROR: no guid in DB");
 } else {
-	var_dump($res);
 	//Ok il guid c'è. Provvedo con l'attivazione dell'utente impostando il flag a 1
-	//Todo : mettere un limite al tempo in cui possa venire attivato un account
 	$database->update("user_login", ["isActive" => 1], ["id" => $res['userId']]);
 	$database->delete("activation",[ "guid" => $guid ]);
 echo '	
@@ -31,7 +30,7 @@ echo '
 
 
 
-	echo "Utente attivato. Attendere per il redirect";
+	echo "Utente attivato. Attendere per il redirect oppure <a href='index.php'>click qua</a> " ;
 	
 	echo "</body></html>";
 	

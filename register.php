@@ -50,14 +50,13 @@ if (isset($_POST['requestRegistration'])){
 		$elencoDomini = explode(";", $allowedDomains);//Separo i domini per punto e virgola
 		$mailDomain = substr($_POST['email'], stripos($_POST['email'], "@") +1 , strlen($_POST['email'])); //Estrapolo il dominio della mail di registrazione
 		foreach ($elencoDomini as $dominio){
-
 			if ( $mailDomain == $dominio){
 				$emailAllowed = true;
 			}		
 		}
 	}
 
-		die();
+		// die();
 	//TODO: Verificare prima che l'indirizzo mail non sia già presente
 	//Genero la coppia di chiavi pubblica/privata
 	$config = array(
@@ -114,7 +113,11 @@ if (isset($_POST['requestRegistration'])){
 					
 		
 		//Preparo il testo della mail con il link di attivazione
-		$actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://" . $_SERVER[HTTP_HOST] . $_SERVER[CONTEXT_PREFIX] . "/index.php";
+		$actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://" . $_SERVER[HTTP_HOST] . $_SERVER[CONTEXT_PREFIX] . "/activate.php";
+		$actual_link .= "?guid=" . $guid;
+		
+		
+		
 		$htmlMailText = "Per completare l'attivaizone cliccare sul link: " . $actual_link;
 		mnemosineSendMail($_POST['email'], $_POST['name'], "Richiesta attivazione account Mnemosine", "$htmlMailText", "$htmlMailText");
 					
