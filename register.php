@@ -30,10 +30,34 @@ if (!$isRegistrationEnabled ){
 	header('Location: index.php');
 	die();
 }
+//Variabile tooltip sui requisiti minimi della password:
+
+$passwordToolTip = "";
+if (isset($minLengthPassword)){
+	$passwordToolTip .= "Lunghezza minima: $minLengthPassword caratteri\n";
+}
+if (isset($useSpecialChars) && $useSpecialChars == 1){
+	$passwordToolTip .= "Presenza di almeno un carattere speciale (!##$%...)\n";
+}
 
 
 //Verifico se arrivano dei dati in post, vuol dire che è stata richiesta una registrazione
 if (isset($_POST['requestRegistration'])){
+	
+	//Faccio una verifica se c'è il limite a livello di dominio mail
+	$emailAllowed = false;
+	if ($allowedDomains != "*"){
+		$elencoDomini = explode(";", $allowedDomains);//Separo i domini per punto e virgola
+		$mailDomain = substr($_POST['email'], stripos($_POST['email'], "@") +1 , strlen($_POST['email'])); //Estrapolo il dominio della mail di registrazione
+		foreach ($elencoDomini as $dominio){
+
+			if ( $mailDomain == $dominio){
+				$emailAllowed = true;
+			}		
+		}
+	}
+
+		die();
 	//TODO: Verificare prima che l'indirizzo mail non sia già presente
 	//Genero la coppia di chiavi pubblica/privata
 	$config = array(
@@ -57,13 +81,12 @@ if (isset($_POST['requestRegistration'])){
 	$pubKey = openssl_pkey_get_details($res);
 	$pubKey = $pubKey["key"];
 	//Default se l'utente è già attivo ($requestMailActivation = 0) oppure devo aspettare il login
-	$isActive = $requestMailActivation == 0 ? 1 : 0;
+	$isActive = $requestMailActivation == false ? 1 : 0;
 	//inserisco i dati nel db
 	$database->insert("user_login",
 			[ 
 				"full_name" => $_POST['name'],
 				"email" => $_POST['email'],
-				// "username" => $_POST['username'],
 				"password" => password_hash($_POST['password'], PASSWORD_DEFAULT),
 				"privkey" => $privKey,
 				"pubkey" => $pubKey,
@@ -236,25 +259,24 @@ input::-webkit-input-placeholder {
 								</div>    <div class="help-block with-errors"></div>
 							</div>
 						</div>
-<?php
-						/*<div class="form-group">
-							<label for="username" class="cols-sm-2 control-label">Username</label>
-							<div class="cols-sm-10">
-								<div class="input-group">
-									<span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
-									<input type="text" class="form-control" name="username" id="username"  placeholder="Enter your Username"/>
-								</div>
-							</div>
-						</div>
-					*/
-						?>
-
 						<div class="form-group">
-							<label for="password" class="cols-sm-2 control-label">Password</label>
+							<label for="password" class="cols-sm-2 control-label">Password <span class='campoNote glyphicon glyphicon-info-sign' data-toggle='tooltip' data-html='true' data-placement='top' title='<?php echo $passwordToolTip?>'></span>
+							<?php
+							/*
+							if (isset($minLengthPassword)){
+										//Gestione lunghezza minima password
+										echo "Lunghezza minima= $minLengthPassword caratteri";
+									}*/?>
+									</label>
 							<div class="cols-sm-10">
 								<div class="input-group">
 									<span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-									<input type="password" class="form-control" name="password" id="password"  placeholder="Enter your Password"/>
+									<input type="password" <?php
+									if (isset($minLengthPassword)){
+										//Gestione lunghezza minima password
+										echo "data-minlength='$minLengthPassword'";
+									}
+									?>class="form-control" name="password" id="password"  placeholder="Enter your Password"/>
 								</div>
 							</div>
 						</div>
@@ -288,6 +310,10 @@ input::-webkit-input-placeholder {
 <script>
 $( document ).ready(function() {
 	$('.form-horizontal').validator();
+	
+	
+	
+	$(".campoNote").tooltip();
 });
 </script>
 </html>
