@@ -113,13 +113,10 @@ if (isset($_POST['requestRegistration'])){
 					]);
 					
 		
-		
+		//Preparo il testo della mail con il link di attivazione
 		$actual_link = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://" . $_SERVER[HTTP_HOST] . $_SERVER[CONTEXT_PREFIX] . "/index.php";
 		$htmlMailText = "Per completare l'attivaizone cliccare sul link: " . $actual_link;
-		
-		
-		
-		mnemosineSendMail("kaya84@gmail.com", "kaya84@gmail.com", "Richiesta attivazione account Mnemosine", "$htmlMailText", "$htmlMailText");
+		mnemosineSendMail($_POST['email'], $_POST['name'], "Richiesta attivazione account Mnemosine", "$htmlMailText", "$htmlMailText");
 					
 	}
 	
